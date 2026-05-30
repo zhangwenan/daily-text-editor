@@ -19,11 +19,13 @@
       "output": "dist"
     },
     "win": {
-      "target": "portable",
-      "arch": ["x64"]
+      "target": "portable"
     },
     "nsis": {
       "runAfterFinish": false
+    },
+    "mac": {
+      "target": "dmg"
     }
   }
 }
