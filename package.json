@@ -1,0 +1,29 @@
+{
+  "name": "daily-text-editor",
+  "version": "1.0.0",
+  "description": "极简日记文本编辑器",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder --win"
+  },
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.0.0"
+  },
+  "build": {
+    "appId": "com.daily.texteditor",
+    "productName": "Daily Text Editor",
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": "portable",
+      "arch": ["x64"]
+    },
+    "nsis": {
+      "runAfterFinish": false
+    }
+  }
+}

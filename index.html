@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daily Text Editor</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+    <!-- 顶部栏 -->
+    <div class="header">
+      <span class="title">Daily Text Editor</span>
+      <button id="btn-settings" class="btn-icon" title="设置存储目录">⚙ 设置</button>
+    </div>
+
+    <!-- 历史消息区域 -->
+    <div id="messages" class="messages"></div>
+
+    <!-- 输入区域 -->
+    <div class="input-area">
+      <textarea id="input-text" placeholder="输入内容，按 Enter 发送..." rows="2"></textarea>
+      <button id="btn-send" class="btn-send">发送</button>
+    </div>
+  </div>
+
+  <!-- 设置弹窗 -->
+  <div id="modal-overlay" class="modal-overlay hidden">
+    <div class="modal">
+      <div class="modal-header">
+        <span>设置存储目录</span>
+        <button id="btn-modal-close" class="btn-icon">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="path-display">
+          <span id="current-path">未设置</span>
+          <button id="btn-select-dir" class="btn-small">选择目录</button>
+        </div>
+        <p class="hint">文件将保存为 YYYYMMDD.md 格式（如 20260530.md）</p>
+      </div>
+      <div class="modal-footer">
+        <button id="btn-save-config" class="btn-send">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>
