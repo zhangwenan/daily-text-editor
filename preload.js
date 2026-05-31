@@ -12,4 +12,6 @@ contextBridge.exposeInMainWorld('api', {
   saveFile: (content) => ipcRenderer.invoke('save-file', content),
   readFile: () => ipcRenderer.invoke('read-file'),
   openDirectory: (dirPath) => ipcRenderer.invoke('open-directory', dirPath),
+  showConfirmDialog: (title, message) => ipcRenderer.invoke('show-confirm-dialog', { title, message }),
+  getAppName: () => ipcRenderer.invoke('get-app-name'),
 });

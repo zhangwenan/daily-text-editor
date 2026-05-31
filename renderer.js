@@ -20,6 +20,13 @@ let pendingImages = []; // 待发送的图片（base64 数组）
 
 // ========== 初始化 ==========
 async function init() {
+  // 动态设置应用标题
+  const appName = await window.api.getAppName();
+  const titleEl = document.getElementById('app-title');
+  if (titleEl) {
+    titleEl.textContent = appName;
+  }
+
   const result = await window.api.getConfig();
   currentSaveDir = result.saveDir || '';
   if (currentSaveDir) {
@@ -261,7 +268,9 @@ function renderImagePreview() {
 
 // ========== 删除历史消息中的图片 ==========
 window.deleteImage = async function(msgIndex, imgIndex) {
-  if (!confirm('确定要删除这张图片吗？')) return;
+  const appName = await window.api.getAppName();
+  const confirmed = await window.api.showConfirmDialog(appName, '确定要删除这张图片吗？');
+  if (!confirmed.confirmed) return;
 
   const result = await window.api.deleteImage(msgIndex, imgIndex);
   if (result.success) {

@@ -3,6 +3,9 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 
+// 应用名称常量（修改此处即可全局生效）
+const APP_NAME = '盯盘速记';
+
 const CONFIG_PATH = path.join(app.getPath('userData'), 'config.json');
 
 // ========== 配置相关 ==========
@@ -139,7 +142,7 @@ function createWindow() {
     height: 600,
     minWidth: 400,
     minHeight: 300,
-    title: '盯盘速记',
+    title: APP_NAME,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
@@ -150,11 +153,11 @@ function createWindow() {
   mainWindow.loadFile('index.html');
 
   // macOS: 确保窗口标题正确显示
-  mainWindow.setTitle('盯盘速记');
+  mainWindow.setTitle(APP_NAME);
   mainWindow.on('page-title-updated', (e, title) => {
-    if (title !== '盯盘速记') {
+    if (title !== APP_NAME) {
       e.preventDefault();
-      mainWindow.setTitle('盯盘速记');
+      mainWindow.setTitle(APP_NAME);
     }
   });
 
@@ -176,6 +179,9 @@ app.on('activate', () => {
 
 // 获取配置
 ipcMain.handle('get-config', () => loadConfig());
+
+// 获取应用名称
+ipcMain.handle('get-app-name', () => APP_NAME);
 
 // 保存配置
 ipcMain.handle('save-config', (event, config) => {
@@ -412,4 +418,17 @@ ipcMain.handle('open-directory', (event, dirPath) => {
   }
   shell.openPath(dirPath);
   return { success: true };
+});
+
+// 显示确认对话框
+ipcMain.handle('show-confirm-dialog', async (event, { title, message }) => {
+  const result = await dialog.showMessageBox(mainWindow, {
+    type: 'question',
+    title: title || APP_NAME,
+    message: message || '确定要执行此操作吗？',
+    buttons: ['取消', '确定'],
+    defaultId: 1,
+    cancelId: 0,
+  });
+  return { confirmed: result.response === 1 };
 });

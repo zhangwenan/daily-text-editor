@@ -27,5 +27,6 @@
     "mac": {
       "target": "dmg"
     }
-  }
+  },
+  "notes": "应用名称已在 main.js 的 APP_NAME 常量中定义，修改时请同步更新此处的 description 和 productName"
 }
