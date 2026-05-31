@@ -5,8 +5,11 @@ contextBridge.exposeInMainWorld('api', {
   saveConfig: (config) => ipcRenderer.invoke('save-config', config),
   selectDirectory: () => ipcRenderer.invoke('select-directory'),
   loadToday: () => ipcRenderer.invoke('load-today'),
-  appendMessage: (text) => ipcRenderer.invoke('append-message', text),
+  appendMessage: (text, images) => ipcRenderer.invoke('append-message', text, images),
+  deleteImage: (msgIndex, imgIndex) => ipcRenderer.invoke('delete-image', { msgIndex, imgIndex }),
+  deleteEmptyMessage: (msgIndex) => ipcRenderer.invoke('delete-empty-message', { msgIndex }),
   updateMessage: (index, date, text) => ipcRenderer.invoke('update-message', { index, date, text }),
   saveFile: (content) => ipcRenderer.invoke('save-file', content),
   readFile: () => ipcRenderer.invoke('read-file'),
+  openDirectory: (dirPath) => ipcRenderer.invoke('open-directory', dirPath),
 });

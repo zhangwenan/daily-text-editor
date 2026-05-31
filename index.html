@@ -10,8 +10,11 @@
   <div id="app">
     <!-- 顶部栏 -->
     <div class="header">
-      <span class="title">Daily Text Editor</span>
-      <button id="btn-settings" class="btn-icon" title="设置存储目录">⚙ 设置</button>
+      <span class="title">盯盘速记</span>
+      <div class="header-actions">
+        <button id="btn-open-dir" class="btn-icon" title="打开存储目录">📂 打开目录</button>
+        <button id="btn-settings" class="btn-icon" title="设置存储目录">⚙ 设置</button>
+      </div>
     </div>
 
     <!-- 历史消息区域 -->
@@ -19,8 +22,15 @@
 
     <!-- 输入区域 -->
     <div class="input-area">
-      <textarea id="input-text" placeholder="输入内容，按 Enter 发送..." rows="2"></textarea>
-      <button id="btn-send" class="btn-send">发送</button>
+      <div class="input-wrapper">
+        <textarea id="input-text" placeholder="输入内容，按 Enter 发送..." rows="2"></textarea>
+        <div id="image-preview" class="image-preview hidden"></div>
+      </div>
+      <div class="input-actions">
+        <button id="btn-upload-img" class="btn-icon-only" title="上传图片">📷</button>
+        <button id="btn-send" class="btn-send">发送</button>
+      </div>
+      <input type="file" id="file-input" accept="image/*" multiple hidden>
     </div>
   </div>
 
