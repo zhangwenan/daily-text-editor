@@ -75,17 +75,9 @@ function createMessageElement(msg, index) {
     imagesHtml = '<div class="message-images">';
     msg.images.forEach((imgPath, imgIdx) => {
       const fileName = imgPath.split('/').pop().split('\\').pop();
-      // 使用正确的 file URL 格式（兼容 Windows 和 macOS）
-      let fileUrl = imgPath;
-      if (process.platform === 'win32') {
-        // Windows: C:\path\to\file → file:///C:/path/to/file
-        fileUrl = 'file:///' + imgPath.replace(/\\/g, '/');
-      } else {
-        fileUrl = 'file://' + imgPath;
-      }
       imagesHtml += `
         <div class="message-thumb-wrapper">
-          <img class="message-thumb" src="${fileUrl}" alt="${fileName}" data-img-path="${imgPath.replace(/"/g, '&quot;')}">
+          <img class="message-thumb" src="file://${imgPath}" alt="${fileName}" onclick="window.showLightbox('${imgPath.replace(/'/g, "\\'")}')">
           <button class="message-thumb-remove" onclick="window.deleteImage(${index}, ${imgIdx})" title="删除图片">×</button>
         </div>
       `;
@@ -94,7 +86,7 @@ function createMessageElement(msg, index) {
   }
 
   // 如果是空消息，显示删除按钮（右侧）
-  const deleteBtnHtml = isEmpty ? `<button class="message" onclick="window.deleteEmptyMessage(${index})" title="删除">×</button>` : '';
+  const deleteBtnHtml = isEmpty ? `<button class="message-delete-btn" onclick="window.deleteEmptyMessage(${index})" title="删除">×</button>` : '';
 
   el.innerHTML = `
     <div class="message-date">${escapeHtml(msg.date)}</div>
@@ -102,14 +94,6 @@ function createMessageElement(msg, index) {
     ${imagesHtml}
     ${deleteBtnHtml}
   `;
-
-  // 绑定图片点击事件（使用 addEventListener 避免转义问题）
-  el.querySelectorAll('.message-thumb').forEach(img => {
-    img.addEventListener('click', () => {
-      const imgPath = img.dataset.imgPath;
-      window.showLightbox(imgPath);
-    });
-  });
 
   // 双击进入编辑模式（编辑单条）
   el.addEventListener('dblclick', () => enterEditSingle(el, index, msg));
@@ -426,17 +410,8 @@ window.showLightbox = function(imgPath) {
     });
   }
 
-  // 处理 Windows 路径格式
-  let fileUrl = imgPath;
-  if (process.platform === 'win32') {
-    // Windows: C:\path\to\file → file:///C:/path/to/file
-    fileUrl = 'file:///' + imgPath.replace(/\\/g, '/');
-  } else {
-    fileUrl = 'file://' + imgPath;
-  }
-
   const lightboxImg = document.getElementById('lightbox-img');
-  lightboxImg.src = fileUrl;
+  lightboxImg.src = `file://${imgPath}`;
   lightbox.classList.remove('hidden');
 };
 
