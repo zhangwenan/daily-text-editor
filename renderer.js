@@ -77,7 +77,7 @@ function createMessageElement(msg, index) {
       const fileName = imgPath.split('/').pop().split('\\').pop();
       imagesHtml += `
         <div class="message-thumb-wrapper">
-          <img class="message-thumb" src="file://${imgPath}" alt="${fileName}" onclick="window.showLightbox('${imgPath.replace(/'/g, "\\'")}')">
+          <img class="message-thumb" src="file://${imgPath.replace(/\\/g, '/')}" alt="${fileName}" onclick="window.showLightbox('${imgPath.replace(/\\/g, '/').replace(/'/g, "\\'")}')">
           <button class="message-thumb-remove" onclick="window.deleteImage(${index}, ${imgIdx})" title="删除图片">×</button>
         </div>
       `;
@@ -411,7 +411,7 @@ window.showLightbox = function(imgPath) {
   }
 
   const lightboxImg = document.getElementById('lightbox-img');
-  lightboxImg.src = `file://${imgPath}`;
+  lightboxImg.src = `file://${imgPath.replace(/\\/g, '/')}`;
   lightbox.classList.remove('hidden');
 };
 
