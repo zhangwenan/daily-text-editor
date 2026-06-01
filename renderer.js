@@ -385,6 +385,15 @@ btnSaveConfig.addEventListener('click', async () => {
 // ========== 事件绑定 ==========
 btnSend.addEventListener('click', sendMessage);
 
+// 刷新按钮
+document.getElementById('btn-refresh').addEventListener('click', async () => {
+  if (!currentSaveDir) {
+    alert('请先设置存储目录！');
+    return;
+  }
+  await loadMessages();
+});
+
 inputText.addEventListener('keydown', (e) => {
   // Enter 发送（不含 Shift，支持多行输入用 Shift+Enter）
   if (e.key === 'Enter' && !e.shiftKey) {
