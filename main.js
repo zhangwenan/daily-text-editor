@@ -62,8 +62,8 @@ function parseFileContent(content, baseDir) {
 
   while (i < lines.length) {
     const line = lines[i];
-    // 跳过标题行和空行
-    if (!line || line.startsWith('#') || line.trim() === '') {
+    // 跳过标题行
+    if (line && line.startsWith('#')) {
       i++;
       continue;
     }
@@ -75,8 +75,8 @@ function parseFileContent(content, baseDir) {
       const imagePaths = [];
       i++;
 
-      // 收集后续非空行作为内容，直到遇到空行或文件结束
-      while (i < lines.length && lines[i].trim() !== '') {
+      // 收集后续行作为内容，直到遇到新的日期行或文件结束
+      while (i < lines.length) {
         // 如果下一行又是日期，停止
         if (lines[i].match(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/)) break;
 
@@ -92,19 +92,21 @@ function parseFileContent(content, baseDir) {
           if (fs.existsSync(imgPath)) {
             imagePaths.push(imgPath);
           }
-        } else {
+        } else if (lines[i].trim() !== '') {
+          // 非空行且不是图片引用，作为文本内容
           textLines.push(lines[i]);
+        } else {
+          // 空行也保留（保留原文格式）
+          textLines.push('');
         }
         i++;
       }
 
       messages.push({
         date: dateStr,
-        text: textLines.join('\n'),
+        text: textLines.join('\n').trimEnd(),
         images: imagePaths.length > 0 ? imagePaths : undefined
       });
-      // 跳过空行
-      while (i < lines.length && lines[i].trim() === '') i++;
     } else {
       i++;
     }
