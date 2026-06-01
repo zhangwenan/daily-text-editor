@@ -84,6 +84,8 @@ function parseFileContent(content, baseDir) {
         const imgMatch = lines[i].match(/^!\[.*?\]\((.*?)\)$/);
         if (imgMatch) {
           let imgPath = imgMatch[1];
+          // 统一使用 / 作为路径分隔符
+          imgPath = imgPath.replace(/\\/g, '/');
           // 如果是相对路径，转换为绝对路径
           if (!path.isAbsolute(imgPath)) {
             imgPath = path.join(baseDir, imgPath);
@@ -124,7 +126,8 @@ function messagesToContent(messages, baseDir) {
     // 添加图片引用
     if (m.images && m.images.length > 0) {
       for (const imgPath of m.images) {
-        const relativePath = path.relative(baseDir, imgPath);
+        // 统一使用 / 作为路径分隔符
+        let relativePath = path.relative(baseDir, imgPath).replace(/\\/g, '/');
         entry += `\n![image](${relativePath})`;
       }
     }
@@ -220,7 +223,7 @@ function saveImage(base64Data, saveDir) {
   // 创建图片目录：YYYYMMDDimgs
   const today = new Date();
   const dirName = `${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, '0')}${String(today.getDate()).padStart(2, '0')}imgs`;
-  const imgDir = path.join(saveDir, dirName);
+  const imgDir = path.join(saveDir, dirName).replace(/\\/g, '/');
 
   if (!fs.existsSync(imgDir)) {
     fs.mkdirSync(imgDir, { recursive: true });
@@ -235,7 +238,7 @@ function saveImage(base64Data, saveDir) {
   const minute = String(now.getMinutes()).padStart(2, '0');
   const second = String(now.getSeconds()).padStart(2, '0');
   const fileName = `${year}${month}${day}_${hour}${minute}${second}.png`;
-  const filePath = path.join(imgDir, fileName);
+  const filePath = path.join(imgDir, fileName).replace(/\\/g, '/');
 
   // 去除 base64 前缀（如果有）
   const base64Clean = base64Data.replace(/^data:image\/\w+;base64,/, '');
