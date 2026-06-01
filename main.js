@@ -274,7 +274,7 @@ ipcMain.handle('append-message', (event, text, images) => {
     }
     // 添加图片 Markdown 引用
     for (const imgPath of savedImages) {
-      const relativePath = path.relative(path.dirname(filePath), imgPath);
+      const relativePath = path.relative(path.dirname(filePath), imgPath).replace(/\\/g, '/');
       entry += `![image](${relativePath})\n`;
     }
 
