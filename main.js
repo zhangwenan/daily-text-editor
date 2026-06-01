@@ -226,10 +226,15 @@ function saveImage(base64Data, saveDir) {
     fs.mkdirSync(imgDir, { recursive: true });
   }
 
-  // 生成唯一文件名
-  const timestamp = Date.now();
-  const random = Math.random().toString(36).substring(2, 8);
-  const fileName = `${timestamp}_${random}.png`;
+  // 生成文件名：YYYYMMDD_HHMMSS.png
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  const hour = String(now.getHours()).padStart(2, '0');
+  const minute = String(now.getMinutes()).padStart(2, '0');
+  const second = String(now.getSeconds()).padStart(2, '0');
+  const fileName = `${year}${month}${day}_${hour}${minute}${second}.png`;
   const filePath = path.join(imgDir, fileName);
 
   // 去除 base64 前缀（如果有）
