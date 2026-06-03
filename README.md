@@ -69,3 +69,42 @@ npm start
 ## 使用 pack.bat 一键打包
 
 双击运行 `pack.bat`，按提示操作即可自动完成依赖安装 + 打包。
+
+## Git 凭证配置（重要）
+
+本项目的 GitHub Token 已存储在 **macOS 钥匙串（Keychain）** 中，无需在配置文件中保存 Token。
+
+### Token 失效时如何更新
+
+1. 登录 GitHub，生成新的 Personal Access Token（Classic）
+   - 路径：Settings → Developer settings → Personal access tokens → Tokens (classic)
+   - 权限：勾选 `repo`
+   - 复制生成的 Token（仅显示一次）
+
+2. 在终端执行以下命令，更新钥匙串中的 Token：
+   ```bash
+   echo "protocol=https
+   host=github.com
+   username=zhangwenan
+   password=新的Token" | git credential approve
+   ```
+
+3. 验证是否生效：
+   ```bash
+   cd /Users/zhangwenan/CodeBuddy/20260529164258/text-editor
+   git pull origin main
+   ```
+   如果无需输入密码即拉取成功，说明 Token 已生效。
+
+### 查看钥匙串中的凭证
+
+在 macOS「钥匙串访问」应用中：
+- 搜索：`github.com`
+- 条目名称：`github.com`
+- 用户名：`zhangwenan`
+
+### 注意事项
+
+- ⚠️ 不要将 Token 写入代码或配置文件中
+- ⚠️ 如果 Token 泄露，立即在 GitHub 设置中撤销
+- ✅ 钥匙串中的凭证对所有本地 Git 仓库生效
