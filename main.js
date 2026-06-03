@@ -36,15 +36,58 @@ function saveConfig(config) {
 // ========== 文件相关 ==========
 function getTodayFilePath(saveDir) {
   const today = new Date();
-  const fileName = `${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, '0')}${String(today.getDate()).padStart(2, '0')}.md`;
-  return path.join(saveDir, fileName);
+  const dateStr = `${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, '0')}${String(today.getDate()).padStart(2, '0')}`;
+  const dirPath = path.join(saveDir, dateStr);
+  const fileName = `${dateStr}盘中记录.md`;
+  return path.join(dirPath, fileName);
 }
 
 function ensureTodayFile(saveDir) {
-  if (!fs.existsSync(saveDir)) {
-    fs.mkdirSync(saveDir, { recursive: true });
-  }
   const filePath = getTodayFilePath(saveDir);
+  const dirPath = path.dirname(filePath);
+  
+  // 确保日期目录存在
+  if (!fs.existsSync(dirPath)) {
+    fs.mkdirSync(dirPath, { recursive: true });
+  }
+  
+  // 兼容逻辑：检查并迁移旧的文件结构
+  const today = new Date();
+  const dateStr = `${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, '0')}${String(today.getDate()).padStart(2, '0')}`;
+  const oldFilePath = path.join(saveDir, `${dateStr}.md`).replace(/\\/g, '/');
+  
+  if (fs.existsSync(oldFilePath) && !fs.existsSync(filePath)) {
+    // 旧文件存在且新文件不存在，执行迁移
+    fs.renameSync(oldFilePath, filePath);
+    
+    // 迁移旧图片目录
+    const oldImgDir = path.join(saveDir, `${dateStr}imgs`).replace(/\\/g, '/');
+    const newImgDir = path.join(dirPath, 'imgs').replace(/\\/g, '/');
+    
+    if (fs.existsSync(oldImgDir) && !fs.existsSync(newImgDir)) {
+      fs.renameSync(oldImgDir, newImgDir);
+    }
+    
+    // 更新文件中的图片路径（从 ../../ 改为相对路径）
+    const content = fs.readFileSync(filePath, 'utf-8');
+    const updatedContent = content.replace(/!\[image\]\(.*?\)/g, (match, p1) => {
+      const imgMatch = match.match(/^!\[image\]\((.*?)\)$/);
+      if (imgMatch) {
+        let imgPath = imgMatch[1];
+        // 如果是旧路径格式（包含 YYYYMMDDimgs），转换为新路径
+        if (imgPath.includes(`${dateStr}imgs`)) {
+          const imgFileName = imgPath.split('/').pop().split('\\').pop();
+          return `![image](imgs/${imgFileName})`;
+        }
+      }
+      return match;
+    });
+    
+    if (content !== updatedContent) {
+      fs.writeFileSync(filePath, updatedContent, 'utf-8');
+    }
+  }
+  
   if (!fs.existsSync(filePath)) {
     const today = new Date();
     const header = `# ${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}\n\n`;
@@ -220,10 +263,10 @@ ipcMain.handle('load-today', () => {
 
 // 保存 base64 图片到日期图片目录
 function saveImage(base64Data, saveDir) {
-  // 创建图片目录：YYYYMMDDimgs
+  // 创建图片目录：YYYYMMDD/imgs
   const today = new Date();
-  const dirName = `${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, '0')}${String(today.getDate()).padStart(2, '0')}imgs`;
-  const imgDir = path.join(saveDir, dirName).replace(/\\/g, '/');
+  const dateStr = `${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, '0')}${String(today.getDate()).padStart(2, '0')}`;
+  const imgDir = path.join(saveDir, dateStr, 'imgs').replace(/\\/g, '/');
 
   if (!fs.existsSync(imgDir)) {
     fs.mkdirSync(imgDir, { recursive: true });
@@ -415,8 +458,8 @@ ipcMain.handle('get-image-dir', (event, dateStr) => {
   if (!config.saveDir) return null;
   // dateStr 格式：YYYY-MM-DD
   const dateParts = dateStr.split(' ')[0].split('-');
-  const dirName = `${dateParts[0]}${dateParts[1]}${dateParts[2]}imgs`;
-  return path.join(config.saveDir, dirName);
+  const dirName = `${dateParts[0]}${dateParts[1]}${dateParts[2]}`;
+  return path.join(config.saveDir, dirName, 'imgs');
 });
 
 // 打开目录
