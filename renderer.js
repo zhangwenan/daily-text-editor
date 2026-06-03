@@ -306,10 +306,10 @@ window.toggleMark = async function(msgIndex) {
   let newText;
   if (msg.text.includes('【需整理固化】')) {
     // 取消固化：去掉标记
-    newText = msg.text.replace(/【需整理固化】$/, '').trim();
+    newText = msg.text.replace('【需整理固化】', '').trim();
   } else {
-    // 固化经验：添加标记
-    newText = msg.text + '\n【需整理固化】';
+    // 固化经验：添加标记到最前面
+    newText = '【需整理固化】' + msg.text;
   }
 
   const result = await window.api.updateMessage(msgIndex, msg.date, newText);
