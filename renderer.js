@@ -85,11 +85,19 @@ function createMessageElement(msg, index) {
     imagesHtml += '</div>';
   }
 
+  // 检查是否已有固化标记
+  const hasMark = msg.text.includes('【需整理固化】');
+  const markBtnText = hasMark ? '取消固化' : '固化经验';
+  const markBtnClass = hasMark ? 'message-unmark-btn' : 'message-mark-btn';
+
   // 如果是空消息，显示删除按钮（右侧）
   const deleteBtnHtml = isEmpty ? `<button class="message-delete-btn" onclick="window.deleteEmptyMessage(${index})" title="删除">×</button>` : '';
 
   el.innerHTML = `
-    <div class="message-date">${escapeHtml(msg.date)}</div>
+    <div class="message-date">
+      ${escapeHtml(msg.date)}
+      <button class="${markBtnClass}" onclick="window.toggleMark(${index})">${markBtnText}</button>
+    </div>
     <div class="message-text">${escapeHtml(msg.text)}</div>
     ${imagesHtml}
     ${deleteBtnHtml}
@@ -287,6 +295,28 @@ window.deleteEmptyMessage = async function(msgIndex) {
     await loadMessages(); // 重新加载
   } else {
     alert('删除失败：' + result.error);
+  }
+};
+
+// ========== 固化经验 / 取消固化 ==========
+window.toggleMark = async function(msgIndex) {
+  const msg = allMessages[msgIndex];
+  if (!msg) return;
+
+  let newText;
+  if (msg.text.includes('【需整理固化】')) {
+    // 取消固化：去掉标记
+    newText = msg.text.replace(/【需整理固化】$/, '').trim();
+  } else {
+    // 固化经验：添加标记
+    newText = msg.text + '\n【需整理固化】';
+  }
+
+  const result = await window.api.updateMessage(msgIndex, msg.date, newText);
+  if (result.success) {
+    await loadMessages(); // 重新加载
+  } else {
+    alert('操作失败：' + result.error);
   }
 };
 

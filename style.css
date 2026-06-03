@@ -80,6 +80,41 @@ body {
   color: #888;
   margin-bottom: 4px;
   font-family: 'Consolas', 'Courier New', monospace;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 固化经验按钮 */
+.message-mark-btn {
+  padding: 2px 8px;
+  background: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 11px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.message-mark-btn:hover {
+  background: #45a049;
+}
+
+/* 取消固化按钮 */
+.message-unmark-btn {
+  padding: 2px 8px;
+  background: #f44336;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 11px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.message-unmark-btn:hover {
+  background: #da190b;
 }
 
 .message-text {
